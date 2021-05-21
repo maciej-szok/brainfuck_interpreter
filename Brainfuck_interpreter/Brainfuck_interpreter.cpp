@@ -5,12 +5,15 @@
 int main()
 {
 
-    std::string command = "++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.";
+    std::string command = ",>+>+<<[->>[->+>+<<]<[->>+<<]>>[-<+>]>[-<<<+>>>]<<<<]>>.";
+    //std::getline(std::cin, command);
 
     Interpreter in;
-    in.setProgramm(command);
+    in.setProgramm(command);    
 
     in.interpret();
+
+    std::cin.get();
 
 }
 

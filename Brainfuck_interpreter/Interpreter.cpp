@@ -1,7 +1,7 @@
 #include "Interpreter.h"
 #include <iostream>
 #include <algorithm> 
-
+#include "CONFIG.h"
 
 Interpreter::Interpreter()
 {
@@ -9,8 +9,6 @@ Interpreter::Interpreter()
 	instructionPointer = 0;
 	running = true;
 	memory.push_back(0);
-	//memory.resize(1);
-	//std::fill(memory.begin(), memory.end(), 0);
 }
 
 
@@ -59,12 +57,31 @@ char Interpreter::getCurrentCommand()
 	return instructionSet[instructionPointer];
 }
 
+void Interpreter::getInput()
+{
+	int temp;
+	std::cin >> temp;
+	if (temp > 255) temp = 255;
+	if (temp < 0) temp = 0;
+	memory[memoryPointer] = temp;
+}
+
+bool Interpreter::isValidInstruction(const char instuction)
+{
+	if (instuction == BRAINFUCK_INCREMENT_POINTER || instuction == BRAINFUCK_DECREMENT_POINTER ||
+		instuction == BRAINFUCK_INCREMENT_MEMORY || instuction == BRAINFUCK_DECREMENT_MEMORY
+		|| instuction == BRAINFUCK_LEFT_PARENTHESES || instuction == BRAINFUCK_RIGHT_PARENTHESES
+		|| instuction == BRAINFUCK_OUTPUT || instuction == BRAINFUCK_INPUT) return true;
+
+	return false;
+}
+
 
 
 void Interpreter::updateInstructionPointer()
 {
 	char currentCommand = this->getCurrentCommand();
-	if (currentCommand != '[' && currentCommand != ']') {
+	if (currentCommand != BRAINFUCK_LEFT_PARENTHESES && currentCommand != BRAINFUCK_RIGHT_PARENTHESES) {
 		instructionPointer++;
 	}
 	else {
@@ -72,11 +89,11 @@ void Interpreter::updateInstructionPointer()
 		//when entountering the right one, if current memory is != 0
 		//i peek the stack and go to that adress
 		//when current memory is == 0 when i pop from stack
-		if (currentCommand == '[') {
+		if (currentCommand == BRAINFUCK_LEFT_PARENTHESES) {
 			instructionPointer++;
 			parenthesesStack.push(instructionPointer);
 			
-		}else if (currentCommand == ']') {
+		}else if (currentCommand == BRAINFUCK_RIGHT_PARENTHESES) {
 			if (memory[memoryPointer] != 0) {
 				instructionPointer = parenthesesStack.top();
 			}
@@ -95,6 +112,7 @@ void Interpreter::setProgramm(std::string programm)
 	this->instructionSet = programm;
 }
 
+
 void Interpreter::interpret()
 {
 	
@@ -102,20 +120,16 @@ void Interpreter::interpret()
 		char currentCommand = this->getCurrentCommand();
 
 		if (currentCommand == '\0') running = false;
+		if (!this->isValidInstruction(currentCommand)) continue;
 		
-		if (currentCommand == '.') this->output();
+		if (currentCommand == BRAINFUCK_OUTPUT) this->output();
+		if (currentCommand == BRAINFUCK_INPUT) this->getInput();
 
-		if (currentCommand == '>') this->incrementMemoryPointer();
+		if (currentCommand == BRAINFUCK_INCREMENT_POINTER) this->incrementMemoryPointer();
+		if (currentCommand == BRAINFUCK_DECREMENT_POINTER) this->decrementMemoryPointer();
 
-		if (currentCommand == '<') this->decrementMemoryPointer();
-
-		if (currentCommand == '+') this->incrementMemory();
-
-		if (currentCommand == '-') this->decrementMemory();
-		
-		//if (currentCommand == '[') this->decrementMemory();
-		//
-		//if (currentCommand == ']') this->decrementMemory();
+		if (currentCommand == BRAINFUCK_INCREMENT_MEMORY) this->incrementMemory();
+		if (currentCommand == BRAINFUCK_DECREMENT_MEMORY) this->decrementMemory();
 
 		this->updateInstructionPointer();
 	}

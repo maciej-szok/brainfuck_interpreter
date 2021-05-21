@@ -11,7 +11,6 @@ private:
 	bool running;
 
 	std::string instructionSet;
-
 	size_t instructionPointer;
 
 	void output();
@@ -19,13 +18,14 @@ private:
 	void decrementMemoryPointer();
 	void incrementMemory();
 	void decrementMemory();
+	void getInput();
+
+	bool isValidInstruction(const char instuction);
 
 	char getCurrentCommand();
-
 	void updateInstructionPointer();
 
-public:
-	
+public:	
 	Interpreter();
 
 	void setProgramm(std::string command);
