@@ -1,7 +1,15 @@
 ﻿#include <iostream>
+#include "Interpreter.h"
+#include <string>
 
 int main()
 {
-    std::cout << "Hello World!\n";
+
+    std::string command = "";
+
+    Interpreter in;
+
+    in.interpret(command);
+
 }
 
