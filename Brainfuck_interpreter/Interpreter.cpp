@@ -6,8 +6,11 @@
 Interpreter::Interpreter()
 {
 	memoryPointer = 0;
-	memory.resize(1);
-	std::fill(memory.begin(), memory.end(), 0);
+	instructionPointer = 0;
+	running = true;
+	memory.push_back(0);
+	//memory.resize(1);
+	//std::fill(memory.begin(), memory.end(), 0);
 }
 
 
@@ -41,20 +44,62 @@ void Interpreter::incrementMemory()
 
 void Interpreter::decrementMemory()
 {
-	memory[memoryPointer]++;
+	memory[memoryPointer]--;
 	if (memory[memoryPointer] < 0) {
 		memory[memoryPointer] = 255;
 	}
 }
 
-
-void Interpreter::interpret(std::string command)
+char Interpreter::getCurrentCommand()
 {
-	bool running = true;
+	if (instructionSet.length() == 0) {
+		running = false;
+		return '\0';
+	}
+	return instructionSet[instructionPointer];
+}
 
-	int commandPointer = 0;
+
+
+void Interpreter::updateInstructionPointer()
+{
+	char currentCommand = this->getCurrentCommand();
+	if (currentCommand != '[' && currentCommand != ']') {
+		instructionPointer++;
+	}
+	else {
+		//when entountering left parentheses i push its index to stack
+		//when entountering the right one, if current memory is != 0
+		//i peek the stack and go to that adress
+		//when current memory is == 0 when i pop from stack
+		if (currentCommand == '[') {
+			instructionPointer++;
+			parenthesesStack.push(instructionPointer);
+			
+		}else if (currentCommand == ']') {
+			if (memory[memoryPointer] != 0) {
+				instructionPointer = parenthesesStack.top();
+			}
+			else {
+				parenthesesStack.pop();
+				instructionPointer++;
+			}
+		}
+
+	}
+}
+
+
+void Interpreter::setProgramm(std::string programm)
+{
+	this->instructionSet = programm;
+}
+
+void Interpreter::interpret()
+{
+	
 	while (running) {
-		char currentCommand = command[commandPointer];
+		char currentCommand = this->getCurrentCommand();
 
 		if (currentCommand == '\0') running = false;
 		
@@ -66,8 +111,12 @@ void Interpreter::interpret(std::string command)
 
 		if (currentCommand == '+') this->incrementMemory();
 
-		if (currentCommand == '<') this->decrementMemory();
+		if (currentCommand == '-') this->decrementMemory();
+		
+		//if (currentCommand == '[') this->decrementMemory();
+		//
+		//if (currentCommand == ']') this->decrementMemory();
 
-		commandPointer++;
+		this->updateInstructionPointer();
 	}
 }

@@ -5,11 +5,12 @@
 int main()
 {
 
-    std::string command = "";
+    std::string command = "++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.";
 
     Interpreter in;
+    in.setProgramm(command);
 
-    in.interpret(command);
+    in.interpret();
 
 }
 
