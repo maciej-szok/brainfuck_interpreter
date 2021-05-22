@@ -66,6 +66,7 @@ void Interpreter::getInput()
 	memory[memoryPointer] = temp;
 }
 
+
 bool Interpreter::isValidInstruction(const char instuction)
 {
 	if (instuction == BRAINFUCK_INCREMENT_POINTER || instuction == BRAINFUCK_DECREMENT_POINTER ||
